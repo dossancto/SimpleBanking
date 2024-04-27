@@ -26,7 +26,8 @@ public sealed class UniqueContactUseCase(
             {
                 ConflictField = input.SeachTerm,
                 ConflictId = person.Id,
-                ConflitUser = ConlitedEnum.Person
+                Data = person,
+                UserType = ConlitedEnum.Person
             };
         }
 
@@ -54,12 +55,9 @@ public sealed class UniqueContactUseCase(
                 continue;
             }
 
-            return new()
-            {
-                ConflictField = f,
-                ConflictId = res.ConflictId,
-                ConflitUser = res.ConflitUser
-            };
+            res.ConflictField = f;
+
+            return res;
         }
 
         return UniqueContatOutput.Unique();

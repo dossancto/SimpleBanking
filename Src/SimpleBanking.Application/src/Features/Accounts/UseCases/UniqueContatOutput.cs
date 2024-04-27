@@ -1,3 +1,5 @@
+using SimpleBanking.Domain.Features.Accounts.Entities;
+
 namespace SimpleBanking.Application.Features.Accounts.UseCases;
 
 /// <summary>
@@ -11,6 +13,11 @@ public class UniqueContatOutput
     public required string? ConflictId { get; set; }
 
     /// <summary>
+    /// THe id of the conflited record
+    /// </summary>
+    public required Account? Data { get; set; }
+
+    /// <summary>
     /// THe field in conflict. It can be Email, CPF, CNPJ, ID etc
     /// </summary>
     public required string? ConflictField { get; set; }
@@ -18,19 +25,20 @@ public class UniqueContatOutput
     /// <summary>
     /// THe field in conflict. It can be Email, CPF, CNPJ, ID etc
     /// </summary>
-    public required ConlitedEnum ConflitUser { get; set; }
+    public required ConlitedEnum UserType { get; set; }
 
     /// <summary>
     /// Indicates if the Has some conflict.
     /// </summary>
-    public bool IsUnique => ConflictField is null;
+    public bool IsUnique => Data is null;
 
     public static UniqueContatOutput Unique()
       => new()
       {
           ConflictField = null,
+          Data = null,
           ConflictId = null,
-          ConflitUser = ConlitedEnum.None
+          UserType = ConlitedEnum.None
       };
 }
 

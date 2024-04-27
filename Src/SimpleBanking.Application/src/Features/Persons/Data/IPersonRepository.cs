@@ -1,3 +1,4 @@
+using SimpleBanking.Application.Features.Balances.Data;
 using SimpleBanking.Application.Features.Persons.UseCases.SelectPerson;
 using SimpleBanking.Domain.Features.Persons.Entities;
 
@@ -6,7 +7,7 @@ namespace SimpleBanking.Application.Features.Persons.Data;
 /// <summary>
 /// Represents operating for keeping Persons
 /// </summary>
-public interface IPersonRepository
+public interface IPersonRepository : IBalanceMoveRepository
 {
     /// <summary>
     /// Saves a new Person
