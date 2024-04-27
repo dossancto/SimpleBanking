@@ -58,6 +58,11 @@ public static class CPFValidator
 
     public static bool Repetidos(string nums)
     {
+        if (nums.Count() == 0)
+        {
+            return true;
+        }
+
         var firsChar = nums[0];
 
         return nums.All(x => x == firsChar);

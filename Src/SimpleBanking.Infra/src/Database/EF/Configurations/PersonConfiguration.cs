@@ -26,7 +26,7 @@ public class PersonConfiguration : IEntityTypeConfiguration<EFPerson>
 
         builder.Property(x => x.Debit).IsRequired();
 
-        builder.ToTable(t => t.HasCheckConstraint("CK_Users_Balance", @"""Debit"" > 0"));
+        builder.ToTable(t => t.HasCheckConstraint("CK_Users_Balance", @"""Debit"" >= 0"));
     }
 }
 

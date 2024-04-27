@@ -45,6 +45,11 @@ public class EFPerson : BaseRecord
     public string HashedPassword { get; set; } = string.Empty;
 
     /// <summary>
+    /// Main search field used as search
+    /// </summary>
+    public string Search { get; set; } = string.Empty;
+
+    /// <summary>
     /// A secure key used as additional security mechanism for the account
     /// </summary>
     public string Salt { get; set; } = string.Empty;
@@ -62,21 +67,28 @@ public class EFPerson : BaseRecord
           ResponsableFullName = p.ResponsableFullName
       };
 
-    public static implicit operator Person(EFPerson p)
-      => new()
-      {
-          Salt = p.Salt,
-          HashedPassword = p.HashedPassword,
-          Id = p.Id,
-          CPF = p.CPF,
-          Balance = new()
-          {
-              Debit = p.Debit,
-              DebitFactor = p.DebitFactor,
-          },
-          EmailAddress = p.EmailAddress,
-          ResponsableFullName = p.ResponsableFullName
-      };
+    public static implicit operator Person?(EFPerson? p)
+    {
+        if (p is null)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            Salt = p.Salt,
+            HashedPassword = p.HashedPassword,
+            Id = p.Id,
+            CPF = p.CPF,
+            Balance = new()
+            {
+                Debit = p.Debit,
+                DebitFactor = p.DebitFactor,
+            },
+            EmailAddress = p.EmailAddress,
+            ResponsableFullName = p.ResponsableFullName
+        };
+    }
 }
 
 

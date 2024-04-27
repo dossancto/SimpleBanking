@@ -53,6 +53,49 @@ public class CreatePersonUseCaseTest
     }
 
     [Fact]
+    public async Task CreatePersonUseCase_NonNumericCPF_ShoudThrowValidationError()
+    {
+        //Given
+        var personRepository = new Mock<IPersonRepository>();
+        var passwordHasher = new Mock<IPasswordHasher>();
+        var createPersonInputValidator = new CreatePersonValidator();
+
+        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object);
+
+        passwordHasher
+          .Setup(x => x.Hash(It.IsAny<HashPasswordInput>()))
+          .Returns(new HashPassword()
+          {
+              HashedPassword = "some-thing",
+              Salt = "salt"
+          });
+
+        var usecase = new CreatePersonUseCase(
+            _personRepository: personRepository.Object,
+            _passwordHasher: passwordHasher.Object,
+            _createPersonInputValidator: createPersonInputValidator,
+            _uniqueContact: uniqueContactUseCase
+            );
+
+        var createPersonInput = new CreatePersonInput()
+        {
+            CPF = "string",
+            Email = "test@test.com",
+            FullName = "John Doe",
+            Password = "S#cur3Password"
+        };
+
+        //When
+        var task = () => usecase.Execute(createPersonInput);
+
+        var err = await Assert.ThrowsAsync<ValidationFailException>(task);
+
+        //Then
+        err.Errors.First().Field.Should().Be("CPF");
+        err.Errors.Should().HaveCount(2);
+    }
+
+    [Fact]
     public async Task CreatePersonUseCase_WeakPassword_ShoudThrowValidationError()
     {
         //Given

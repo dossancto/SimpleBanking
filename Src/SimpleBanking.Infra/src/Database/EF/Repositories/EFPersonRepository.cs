@@ -42,14 +42,16 @@ public class EFPersonRepository(
         await _context.SaveChangesAsync();
     }
 
-    public Task<Person?> SearchByTerm(SearchPersonByTermInput input)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Person?> SearchByTerm(SearchPersonByTermInput input)
+    => await _context.Persons
+                  .Where(x => x.Search.Contains(input.Term))
+                  .FirstOrDefaultAsync()
+                  ;
 
-    public Task<Person?> SelectById(SelectPersonByIdInput input)
-    {
-        throw new NotImplementedException();
-    }
+
+    public async Task<Person?> SelectById(SelectPersonByIdInput input)
+    => await _context.Persons
+                  .FindAsync(input.Id)
+                  ;
 }
 
