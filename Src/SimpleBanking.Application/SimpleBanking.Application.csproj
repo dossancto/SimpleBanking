@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="SimpleBanking.Domain.DomainTypes.UseCases" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleBanking.Domain\SimpleBanking.Domain.csproj" />
+    <ProjectReference Include="..\SimpleBanking.Adapters\SimpleBanking.Adapters.csproj" />
+  </ItemGroup>
+
+</Project>

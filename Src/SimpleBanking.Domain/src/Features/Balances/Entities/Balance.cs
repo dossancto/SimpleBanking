@@ -15,6 +15,6 @@ public class Balance
     /// <summary>
     /// Represent the divition factor of the Debit
     /// </summary>
-    public int DebitFactor { get; set; }
+    public int DebitFactor { get; set; } = 100;
 }
 
