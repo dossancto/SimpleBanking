@@ -1,3 +1,4 @@
+using SimpleBanking.Application.Features.Persons.UseCases.SelectPerson;
 using SimpleBanking.Domain.Features.Persons.Entities;
 
 namespace SimpleBanking.Application.Features.Persons.Data;
@@ -12,4 +13,16 @@ public interface IPersonRepository
     /// </summary>
     /// <returns>A string Id indicating the new Person</returns>
     public Task<string> Insert(Person entity);
+
+    /// <summary>
+    /// Searches for a person using his id
+    /// </summary>
+    /// <returns>The seached person or null, if not found</returns>
+    public Task<Person?> SelectById(SelectPersonByIdInput input);
+
+    /// <summary>
+    /// Searches a term 
+    /// </summary>
+    /// <returns>The seached person or null, if not found</returns>
+    public Task<Person?> SearchByTerm(SearchPersonByTermInput input);
 }

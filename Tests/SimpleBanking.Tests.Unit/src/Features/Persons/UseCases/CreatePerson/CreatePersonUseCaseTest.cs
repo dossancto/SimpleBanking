@@ -2,6 +2,8 @@ using SimpleBanking.Application.Features.Persons.Data;
 using SimpleBanking.Adapters.Hash;
 using SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
 using SimpleBanking.Domain.Exceptions;
+using SimpleBanking.Application.Features.Accounts.UseCases;
+using SimpleBanking.Application.Features.Persons.UseCases.SelectPerson;
 
 namespace SimpleBanking.Tests.Unit.Features.Persons.UseCases.CreatePerson;
 
@@ -15,6 +17,8 @@ public class CreatePersonUseCaseTest
         var passwordHasher = new Mock<IPasswordHasher>();
         var createPersonInputValidator = new CreatePersonValidator();
 
+        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object);
+
         passwordHasher
           .Setup(x => x.Hash(It.IsAny<HashPasswordInput>()))
           .Returns(new HashPassword()
@@ -26,7 +30,8 @@ public class CreatePersonUseCaseTest
         var usecase = new CreatePersonUseCase(
             _personRepository: personRepository.Object,
             _passwordHasher: passwordHasher.Object,
-            _createPersonInputValidator: createPersonInputValidator
+            _createPersonInputValidator: createPersonInputValidator,
+            _uniqueContact: uniqueContactUseCase
             );
 
         var createPersonInput = new CreatePersonInput()
@@ -66,7 +71,8 @@ public class CreatePersonUseCaseTest
         var usecase = new CreatePersonUseCase(
             _personRepository: personRepository.Object,
             _passwordHasher: passwordHasher.Object,
-            _createPersonInputValidator: createPersonInputValidator
+            _createPersonInputValidator: createPersonInputValidator,
+            _uniqueContact: default!
             );
 
         var createPersonInput = new CreatePersonInput()
@@ -110,7 +116,8 @@ public class CreatePersonUseCaseTest
         var usecase = new CreatePersonUseCase(
             _personRepository: personRepository.Object,
             _passwordHasher: passwordHasher.Object,
-            _createPersonInputValidator: createPersonInputValidator
+            _createPersonInputValidator: createPersonInputValidator,
+            _uniqueContact: default!
             );
 
         var createPersonInput = new CreatePersonInput()
@@ -154,7 +161,8 @@ public class CreatePersonUseCaseTest
         var usecase = new CreatePersonUseCase(
             _personRepository: personRepository.Object,
             _passwordHasher: passwordHasher.Object,
-            _createPersonInputValidator: createPersonInputValidator
+            _createPersonInputValidator: createPersonInputValidator,
+            _uniqueContact: default!
             );
 
         var createPersonInput = new CreatePersonInput()
@@ -177,6 +185,52 @@ public class CreatePersonUseCaseTest
         });
 
         err.Errors.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task CreatePersonUseCase_ExistentInfos_ShoudThrowEntityError()
+    {
+        //Given
+        var personRepository = new Mock<IPersonRepository>();
+        var passwordHasher = new Mock<IPasswordHasher>();
+        var createPersonInputValidator = new CreatePersonValidator();
+
+        personRepository
+          .Setup(x => x.SearchByTerm(It.IsAny<SearchPersonByTermInput>()))
+          .ReturnsAsync(new Domain.Features.Persons.Entities.Person());
+
+        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object);
+
+        passwordHasher
+          .Setup(x => x.Hash(It.IsAny<HashPasswordInput>()))
+          .Returns(new HashPassword()
+          {
+              HashedPassword = "some-thing",
+              Salt = "salt"
+          });
+
+        var usecase = new CreatePersonUseCase(
+            _personRepository: personRepository.Object,
+            _passwordHasher: passwordHasher.Object,
+            _createPersonInputValidator: createPersonInputValidator,
+            _uniqueContact: uniqueContactUseCase
+            );
+
+        var createPersonInput = new CreatePersonInput()
+        {
+            CPF = "92211617069",
+            Email = "test@test.com",
+            FullName = "John Doe",
+            Password = "S#cur3Password"
+        };
+
+        //When
+        var task = () => usecase.Execute(createPersonInput);
+
+        var err = await Assert.ThrowsAsync<EntityAlreadyExistsException>(task);
+
+        //Then
+        err.Message.Should().Contain("92211617069");
     }
 
 }

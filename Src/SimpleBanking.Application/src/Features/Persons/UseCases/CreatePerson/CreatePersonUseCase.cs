@@ -1,7 +1,9 @@
 using FluentValidation;
 using SimpleBanking.Adapters.Hash;
+using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Persons.Data;
 using SimpleBanking.Application.Validations;
+using SimpleBanking.Domain.Exceptions;
 using SimpleBanking.Domain.Features.Persons.Entities;
 
 namespace SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
@@ -13,12 +15,26 @@ public sealed class CreatePersonUseCase
 (
    IPersonRepository _personRepository,
    IPasswordHasher _passwordHasher,
-   IValidator<CreatePersonInput> _createPersonInputValidator
+   IValidator<CreatePersonInput> _createPersonInputValidator,
+   UniqueContactUseCase _uniqueContact
  ) : IUseCase
 {
     public async Task<SafePerson> Execute(CreatePersonInput input)
     {
+        input.Format();
+
         _createPersonInputValidator.Check(input, "Fail while creating a user, invalid person");
+
+        var notUniqueField = await _uniqueContact.Execute(new UniqueContactInfosInput()
+        {
+            Email = input.Email,
+            CPF = input.CPF
+        });
+
+        if (notUniqueField is not null)
+        {
+            throw new EntityAlreadyExistsException($"This user already exists, {notUniqueField}");
+        }
 
         var hashedPassword = _passwordHasher.Hash(new()
         {
