@@ -13,7 +13,7 @@ public sealed class UniqueContactUseCase(
     /// Execute the method
     /// </summary>
     /// <returns>Boolean indicating if the contact infos is unique</returns>
-    public async Task<bool> Execute(UniqueContactInput input)
+    public async Task<UniqueContatOutput> Execute(UniqueContactInput input)
     {
         var person = await _personRepository.SearchByTerm(new()
         {
@@ -22,17 +22,22 @@ public sealed class UniqueContactUseCase(
 
         if (person is not null)
         {
-            return false;
+            return new()
+            {
+                ConflictField = input.SeachTerm,
+                ConflictId = person.Id,
+                ConflitUser = ConlitedEnum.Person
+            };
         }
 
-        return true;
+        return UniqueContatOutput.Unique();
     }
 
     /// <summary>
     /// Execute the method
     /// </summary>
     /// <returns>Boolean indicating if the contact infos is unique</returns>
-    public async Task<string?> Execute(UniqueContactInfosInput input)
+    public async Task<UniqueContatOutput> Execute(UniqueContactInfosInput input)
     {
         foreach (var f in input.Fields())
         {
@@ -44,14 +49,19 @@ public sealed class UniqueContactUseCase(
                 SeachTerm = f
             });
 
-            if (res)
+            if (res.IsUnique)
             {
                 continue;
             }
 
-            return f;
+            return new()
+            {
+                ConflictField = f,
+                ConflictId = res.ConflictId,
+                ConflitUser = res.ConflitUser
+            };
         }
 
-        return null;
+        return UniqueContatOutput.Unique();
     }
 }

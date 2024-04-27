@@ -31,9 +31,9 @@ public sealed class CreatePersonUseCase
             CPF = input.CPF
         });
 
-        if (notUniqueField is not null)
+        if (!notUniqueField.IsUnique)
         {
-            throw new EntityAlreadyExistsException($"This user already exists, {notUniqueField}");
+            throw new EntityAlreadyExistsException($"This user already exists, {notUniqueField.ConflictField}");
         }
 
         var hashedPassword = _passwordHasher.Hash(new()
