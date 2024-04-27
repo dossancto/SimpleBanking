@@ -20,20 +20,20 @@ public class TransferUseCase(
 
     private async Task Move(UniqueContatOutput sender, UniqueContatOutput receiver, int balance)
     {
-        if (sender.Data is Person senderPerson)
+        Func<Task> senderRepo = sender.Data switch
         {
-            await _personRepository.MoveBalance(senderPerson.Id, balance);
-        }
-        else
-        {
-            // TODO: Change to a better exception
-            throw new Exception("Merchant can't transfer");
-        }
+            Person p => () => _personRepository.MoveBalance(p.Id, -balance),
+            _ => throw new Exception("This sender is not supported")
+        };
 
-        if (receiver.Data is Person p)
+        Func<Task> receiverRepo = receiver.Data switch
         {
-            await _personRepository.MoveBalance(p.Id, balance);
-        }
+            Person p => () => _personRepository.MoveBalance(p.Id, balance),
+            _ => throw new Exception("Receiver not supported")
+        };
+
+        await senderRepo();
+        await receiverRepo();
     }
 
     private async Task<UniqueContatOutput> GetSenderContact(TransferInput input)
