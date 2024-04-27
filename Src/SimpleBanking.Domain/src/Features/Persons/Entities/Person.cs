@@ -22,4 +22,5 @@ public class Person : Account
     /// Represents information about Balance
     /// </summary>
     public Balance Balance { get; set; } = new();
+
 }

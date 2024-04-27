@@ -1,9 +1,11 @@
+using SimpleBanking.Domain.DomainTypes;
+
 namespace SimpleBanking.Domain.Features.Accounts.Entities;
 
 /// <summary>
 /// Represents a generic information about an account
 /// </summary>
-public class Account
+public class Account : BaseRecord
 {
     /// <summary>
     /// The Fullname of the account owner
