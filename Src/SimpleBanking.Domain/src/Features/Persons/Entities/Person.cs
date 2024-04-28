@@ -1,5 +1,4 @@
 using SimpleBanking.Domain.Features.Accounts.Entities;
-using SimpleBanking.Domain.Features.Balances.Entities;
 
 namespace SimpleBanking.Domain.Features.Persons.Entities;
 
@@ -17,10 +16,5 @@ public class Person : Account
     /// This person CPF
     /// </summary>
     public string CPF { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Represents information about Balance
-    /// </summary>
-    public Balance Balance { get; set; } = new();
 
 }

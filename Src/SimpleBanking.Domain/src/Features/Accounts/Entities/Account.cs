@@ -1,4 +1,5 @@
 using SimpleBanking.Domain.DomainTypes;
+using SimpleBanking.Domain.Features.Balances.Entities;
 
 namespace SimpleBanking.Domain.Features.Accounts.Entities;
 
@@ -28,5 +29,10 @@ public class Account : BaseRecord
     /// A secure key used as additional security mechanism for the account
     /// </summary>
     public string Salt { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Represents information about Balance
+    /// </summary>
+    public Balance Balance { get; set; } = new();
 }
 

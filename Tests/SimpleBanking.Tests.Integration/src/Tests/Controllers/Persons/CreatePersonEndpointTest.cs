@@ -1,6 +1,7 @@
 using System.Net;
 using SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
 using SimpleBanking.Domain.Features.Persons.Entities;
+using SimpleBanking.Tests.Integration.Helpers.Creation;
 using SimpleBanking.Tests.Integration.Share.Endpoints;
 
 namespace SimpleBanking.Tests.Integration.Tests.Controllers.Persons;

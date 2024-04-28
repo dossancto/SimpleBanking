@@ -1,13 +1,17 @@
 using SimpleBanking.Application.Features.Accounts.UseCases;
+using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;
 using SimpleBanking.Domain.Exceptions;
+using SimpleBanking.Domain.Features.Balances.Exceptions;
+using SimpleBanking.Domain.Features.Merchants.Entities;
 using SimpleBanking.Domain.Features.Persons.Entities;
 
-namespace SimpleBanking.Application.Features.Balances.Transfer;
+namespace SimpleBanking.Application.Features.Balances.UseCases.Transfer;
 
 public class TransferUseCase(
     UniqueContactUseCase _uniqueContact,
-    IPersonRepository _personRepository
+    IPersonRepository _personRepository,
+    IMerchantRepository _merchantRepository
     ) : IUseCase
 {
     public async Task Execute(TransferInput input)
@@ -23,15 +27,22 @@ public class TransferUseCase(
         Func<Task> senderRepo = sender.Data switch
         {
             Person p => () => _personRepository.MoveBalance(p.Id, -balance),
-            _ => throw new Exception("This sender is not supported")
+            _ => throw new TransferException("This sender is not supported")
         };
 
         Func<Task> receiverRepo = receiver.Data switch
         {
             Person p => () => _personRepository.MoveBalance(p.Id, balance),
-            _ => throw new Exception("Receiver not supported")
+            Merchant m => () => _merchantRepository.MoveBalance(m.Id, balance),
+            _ => throw new TransferException("Receiver not supported")
         };
 
+        if (sender.Data.Balance.Debit < balance)
+        {
+            throw new TransferException("Insuficient ammount");
+        }
+
+        // TODO: Apply Unit of Work
         await senderRepo();
         await receiverRepo();
     }
@@ -50,8 +61,7 @@ public class TransferUseCase(
 
         if (senderT.UserType == ConlitedEnum.Merchant)
         {
-            // TODO: Change to a better exception
-            throw new Exception("Merchant can't transfer");
+            throw new TransferException("Merchant can't transfer");
         }
 
         return senderT;

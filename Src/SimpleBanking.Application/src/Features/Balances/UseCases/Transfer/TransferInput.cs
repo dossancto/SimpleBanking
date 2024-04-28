@@ -1,4 +1,4 @@
-namespace SimpleBanking.Application.Features.Balances.Transfer;
+namespace SimpleBanking.Application.Features.Balances.UseCases.Transfer;
 
 public class TransferInput
 {
