@@ -7,6 +7,7 @@ public static class ProvidersInjection
 {
     public static IServiceCollection AddProviders(this IServiceCollection services)
       => services
+            .AddUnitOfWork()
             .AddMediator()
             .AddFluentValidationConfiguration()
             .AddIdGenerator()

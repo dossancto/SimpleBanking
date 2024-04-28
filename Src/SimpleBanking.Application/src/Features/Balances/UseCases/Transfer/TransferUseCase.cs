@@ -1,3 +1,4 @@
+using Aether.Leagues.Adapters.UnitOfWorks;
 using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;
@@ -11,7 +12,8 @@ namespace SimpleBanking.Application.Features.Balances.UseCases.Transfer;
 public class TransferUseCase(
     UniqueContactUseCase _uniqueContact,
     IPersonRepository _personRepository,
-    IMerchantRepository _merchantRepository
+    IMerchantRepository _merchantRepository,
+    IUnitOfWork _uow
     ) : IUseCase
 {
     public async Task Execute(TransferInput input)
@@ -42,9 +44,13 @@ public class TransferUseCase(
             throw new TransferException("Insuficient ammount");
         }
 
-        // TODO: Apply Unit of Work
-        await senderRepo();
-        await receiverRepo();
+        var work = async () =>
+        {
+            await senderRepo();
+            await receiverRepo();
+        };
+
+        await _uow.Sandbox(work);
     }
 
     private async Task<UniqueContatOutput> GetSenderContact(TransferInput input)

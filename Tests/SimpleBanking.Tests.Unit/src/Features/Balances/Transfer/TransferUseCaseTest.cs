@@ -6,6 +6,7 @@ using SimpleBanking.Application.Features.Persons.UseCases.SelectPerson;
 using SimpleBanking.Domain.Exceptions;
 using SimpleBanking.Domain.Features.Balances.Exceptions;
 using SimpleBanking.Domain.Features.Persons.Entities;
+using SimpleBanking.Tests.Unit.Mocks;
 
 namespace SimpleBanking.Tests.Unit.Features.Balances.Transfer;
 
@@ -18,6 +19,8 @@ public class TransferUseCaseTest
         var personRepository = new Mock<IPersonRepository>();
         var merchantRepository = new Mock<IMerchantRepository>();
 
+        var unitOfWorkMock = new Mock<UnitOfWorkMock>();
+
         var uniqueUsecase = new UniqueContactUseCase(
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object
@@ -26,7 +29,8 @@ public class TransferUseCaseTest
         var usecase = new TransferUseCase(
             _uniqueContact: uniqueUsecase,
             _personRepository: personRepository.Object,
-            _merchantRepository: merchantRepository.Object
+            _merchantRepository: merchantRepository.Object,
+            _uow: unitOfWorkMock.Object
             );
 
         var input = new TransferInput()
@@ -43,6 +47,7 @@ public class TransferUseCaseTest
 
         //Then
         personRepository.Verify(x => x.MoveBalance(It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+        unitOfWorkMock.Verify(x => x.Begin(), Times.Never());
     }
 
     [Fact]
@@ -51,6 +56,8 @@ public class TransferUseCaseTest
         //Given
         var personRepository = new Mock<IPersonRepository>();
         var merchantRepository = new Mock<IMerchantRepository>();
+
+        var unitOfWorkMock = new Mock<UnitOfWorkMock>();
 
         personRepository
           .Setup(x => x.SearchByTerm(It.Is<SearchPersonByTermInput>(x => x.Term == "cpf")))
@@ -82,7 +89,8 @@ public class TransferUseCaseTest
         var usecase = new TransferUseCase(
             _uniqueContact: uniqueUsecase,
             _personRepository: personRepository.Object,
-            _merchantRepository: merchantRepository.Object
+            _merchantRepository: merchantRepository.Object,
+            _uow: unitOfWorkMock.Object
             );
 
         var input = new TransferInput()
@@ -100,6 +108,10 @@ public class TransferUseCaseTest
 
         personRepository.Verify(x => x.MoveBalance(It.Is<string>(x => x == "1"), It.Is<int>(x => x == -20)), Times.Once());
         personRepository.Verify(x => x.MoveBalance(It.Is<string>(x => x == "2"), It.Is<int>(x => x == 20)), Times.Once());
+
+        unitOfWorkMock.Verify(x => x.Begin(), Times.Once());
+        unitOfWorkMock.Verify(x => x.Apply(), Times.Once());
+        unitOfWorkMock.Verify(x => x.Rollback(), Times.Never());
     }
 
     [Fact]
@@ -108,6 +120,8 @@ public class TransferUseCaseTest
         //Given
         var personRepository = new Mock<IPersonRepository>();
         var merchantRepository = new Mock<IMerchantRepository>();
+
+        var unitOfWorkMock = new Mock<UnitOfWorkMock>();
 
         personRepository
           .Setup(x => x.SearchByTerm(It.Is<SearchPersonByTermInput>(x => x.Term == "cpf")))
@@ -139,7 +153,8 @@ public class TransferUseCaseTest
         var usecase = new TransferUseCase(
             _uniqueContact: uniqueUsecase,
             _personRepository: personRepository.Object,
-            _merchantRepository: merchantRepository.Object
+            _merchantRepository: merchantRepository.Object,
+            _uow: unitOfWorkMock.Object
             );
 
         var input = new TransferInput()
@@ -157,5 +172,9 @@ public class TransferUseCaseTest
 
         personRepository.Verify(x => x.MoveBalance(It.Is<string>(x => x == "1"), It.IsAny<int>()), Times.Never());
         personRepository.Verify(x => x.MoveBalance(It.Is<string>(x => x == "2"), It.IsAny<int>()), Times.Never());
+
+        unitOfWorkMock.Verify(x => x.Begin(), Times.Never());
+        unitOfWorkMock.Verify(x => x.Apply(), Times.Never());
+        unitOfWorkMock.Verify(x => x.Rollback(), Times.Never());
     }
 }
