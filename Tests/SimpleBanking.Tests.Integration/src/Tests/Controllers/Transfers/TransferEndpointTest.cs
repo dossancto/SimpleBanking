@@ -1,5 +1,7 @@
 using System.Net;
+using Microsoft.Extensions.DependencyInjection;
 using SimpleBanking.Application.Features.Balances.UseCases.Transfer;
+using SimpleBanking.Application.Features.Persons.Data;
 using SimpleBanking.Tests.Integration.Helpers.Creation;
 using SimpleBanking.Tests.Integration.Share.Endpoints;
 
@@ -10,13 +12,18 @@ public class TransferEndpointTest(IntegrationTestWebApplicationFactory web) : In
     [Fact]
     public async Task TestNameAsync()
     {
+        var senderInitialBalance = 200;
+        var receiverInitialBalance = 300;
         //Given
         var client = web.CreateClient();
-
         var resources = web.Resources();
 
-        var p1 = await resources.CreatePerson();
-        var p2 = await resources.CreatePerson();
+        using var scope = resources.Web.Services.CreateScope();
+
+        var personRepo = scope.ServiceProvider.GetRequiredService<IPersonRepository>();
+
+        var p1 = await resources.CreatePersonWithBalance(senderInitialBalance);
+        var p2 = await resources.CreatePersonWithBalance(receiverInitialBalance);
 
         var createInput = new TransferInput()
         {
@@ -32,6 +39,20 @@ public class TransferEndpointTest(IntegrationTestWebApplicationFactory web) : In
         var content = await response.Content.ReadAsStringAsync();
 
         //Then
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var p1Info = await personRepo.SelectById(new()
+        {
+            Id = p1.Id
+        });
+
+        p1Info!.Balance.Debit.Should().Be(100);
+
+        var p2Info = await personRepo.SelectById(new()
+        {
+            Id = p2.Id
+        });
+
+        p2Info!.Balance.Debit.Should().Be(400);
     }
 }

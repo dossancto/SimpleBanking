@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using SimpleBanking.Application.Features.Persons.UseCases.AddAmmount;
 using SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
 using SimpleBanking.Domain.Features.Persons.Entities;
 
@@ -17,10 +18,8 @@ public static class CreatePersonHelper
         Web = web
     };
 
-    public static async Task<SafePerson> CreatePerson(this CreatePersonResource resource)
+    private static async Task<SafePerson> CreatePerson(this CreatePersonResource resource, IServiceScope scope)
     {
-        using var scope = resource.Web.Services.CreateScope();
-
         var registerPlayer = scope.ServiceProvider.GetRequiredService<CreatePersonUseCase>();
 
         var randomId = IdGenerator.Safe();
@@ -37,5 +36,29 @@ public static class CreatePersonHelper
         };
 
         return await registerPlayer.Execute(payload);
+    }
+
+    public static Task<SafePerson> CreatePerson(this CreatePersonResource resource)
+    {
+        using var scope = resource.Web.Services.CreateScope();
+
+        return resource.CreatePerson(scope);
+    }
+
+    public static async Task<SafePerson> CreatePersonWithBalance(this CreatePersonResource resource, int ammount)
+    {
+        using var scope = resource.Web.Services.CreateScope();
+
+        var person = await resource.CreatePerson(scope);
+
+        var addAmmount = scope.ServiceProvider.GetRequiredService<AddAmmountUseCase>();
+
+        var input = new AddAmmountInput()
+        {
+            Balance = ammount,
+            Person = person.Id
+        };
+
+        return await addAmmount.Execute(input);
     }
 }

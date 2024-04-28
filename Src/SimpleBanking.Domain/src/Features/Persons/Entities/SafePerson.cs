@@ -52,4 +52,7 @@ public static class SafePersonExtension
           CPF = p.CPF,
           Balance = p.Balance
       };
+
+    public static async Task<SafePerson> SafeData(this Task<Person> p)
+      => SafeData(await p);
 }
