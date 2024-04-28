@@ -54,6 +54,17 @@ public class EFMerchant : BaseRecord
     /// </summary>
     public string Salt { get; set; } = string.Empty;
 
+    public string BuildSearch()
+      => EFMerchant.BuildSearch(EmailAddress, CNPJ, Id);
+
+    public static string BuildSearch(string EmailAddress, string CNPJ, string Id)
+      => string.Join(",", [
+        EmailAddress,
+        CNPJ,
+        Id
+    ]);
+
+
     public static implicit operator EFMerchant(Merchant p)
       => new()
       {
@@ -64,7 +75,8 @@ public class EFMerchant : BaseRecord
           Debit = p.Balance.Debit,
           DebitFactor = p.Balance.DebitFactor,
           EmailAddress = p.EmailAddress,
-          ResponsableFullName = p.ResponsableFullName
+          ResponsableFullName = p.ResponsableFullName,
+          Search = BuildSearch(p.EmailAddress, p.CNPJ, p.Id)
       };
 
     public static implicit operator Merchant?(EFMerchant? p)

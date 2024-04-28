@@ -54,6 +54,16 @@ public class EFPerson : BaseRecord
     /// </summary>
     public string Salt { get; set; } = string.Empty;
 
+    public string BuildSearch()
+      => EFPerson.BuildSearch(EmailAddress, CPF, Id);
+
+    public static string BuildSearch(string EmailAddress, string CPF, string Id)
+      => string.Join(",", [
+        EmailAddress,
+        CPF,
+        Id
+    ]);
+
     public static implicit operator EFPerson(Person p)
       => new()
       {
@@ -64,7 +74,8 @@ public class EFPerson : BaseRecord
           Debit = p.Balance.Debit,
           DebitFactor = p.Balance.DebitFactor,
           EmailAddress = p.EmailAddress,
-          ResponsableFullName = p.ResponsableFullName
+          ResponsableFullName = p.ResponsableFullName,
+          Search = BuildSearch(p.EmailAddress, p.CPF, p.Id)
       };
 
     public static implicit operator Person?(EFPerson? p)
