@@ -4,6 +4,7 @@ using SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
 using SimpleBanking.Domain.Exceptions;
 using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Persons.UseCases.SelectPerson;
+using SimpleBanking.Application.Features.Merchants.Data;
 
 namespace SimpleBanking.Tests.Unit.Features.Persons.UseCases.CreatePerson;
 
@@ -14,10 +15,13 @@ public class CreatePersonUseCaseTest
     {
         //Given
         var personRepository = new Mock<IPersonRepository>();
+        var merchantRepository = new Mock<IMerchantRepository>();
+
         var passwordHasher = new Mock<IPasswordHasher>();
+
         var createPersonInputValidator = new CreatePersonValidator();
 
-        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object);
+        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object, merchantRepository.Object);
 
         passwordHasher
           .Setup(x => x.Hash(It.IsAny<HashPasswordInput>()))
@@ -57,10 +61,11 @@ public class CreatePersonUseCaseTest
     {
         //Given
         var personRepository = new Mock<IPersonRepository>();
+        var merchantRepository = new Mock<IMerchantRepository>();
         var passwordHasher = new Mock<IPasswordHasher>();
         var createPersonInputValidator = new CreatePersonValidator();
 
-        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object);
+        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object, merchantRepository.Object);
 
         passwordHasher
           .Setup(x => x.Hash(It.IsAny<HashPasswordInput>()))
@@ -235,6 +240,7 @@ public class CreatePersonUseCaseTest
     {
         //Given
         var personRepository = new Mock<IPersonRepository>();
+        var merchantRepository = new Mock<IMerchantRepository>();
         var passwordHasher = new Mock<IPasswordHasher>();
         var createPersonInputValidator = new CreatePersonValidator();
 
@@ -242,7 +248,7 @@ public class CreatePersonUseCaseTest
           .Setup(x => x.SearchByTerm(It.IsAny<SearchPersonByTermInput>()))
           .ReturnsAsync(new Domain.Features.Persons.Entities.Person());
 
-        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object);
+        var uniqueContactUseCase = new UniqueContactUseCase(personRepository.Object, merchantRepository.Object);
 
         passwordHasher
           .Setup(x => x.Hash(It.IsAny<HashPasswordInput>()))
