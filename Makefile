@@ -9,3 +9,5 @@ test/unit:
 
 test/integration:
 	dotnet test Tests/SimpleBanking.Tests.Integration/
+
+test/all: test/unit test/integration 

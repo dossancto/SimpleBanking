@@ -1,3 +1,4 @@
+using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;
 
 namespace SimpleBanking.Application.Features.Accounts.UseCases;
@@ -6,7 +7,8 @@ namespace SimpleBanking.Application.Features.Accounts.UseCases;
 /// Represents a usecase for asserting that unique informaitons are really unique
 /// </summary>
 public sealed class UniqueContactUseCase(
-    IPersonRepository _personRepository
+    IPersonRepository _personRepository,
+    IMerchantRepository _merchantRepository
 ) : IUseCase
 {
     /// <summary>
@@ -28,6 +30,22 @@ public sealed class UniqueContactUseCase(
                 ConflictId = person.Id,
                 Data = person,
                 UserType = ConlitedEnum.Person
+            };
+        }
+
+        var merchant = await _merchantRepository.SearchByTerm(new()
+        {
+            Term = input.SeachTerm
+        });
+
+        if (merchant is not null)
+        {
+            return new()
+            {
+                ConflictField = input.SeachTerm,
+                ConflictId = merchant.Id,
+                Data = merchant,
+                UserType = ConlitedEnum.Merchant
             };
         }
 

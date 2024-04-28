@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
 
-namespace SimpleBanking.API.Controllers;
+namespace SimpleBanking.API.Controllers.Persons;
 
 public partial class PersonsController
 {
