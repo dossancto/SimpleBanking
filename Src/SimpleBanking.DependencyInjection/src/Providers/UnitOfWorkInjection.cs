@@ -1,4 +1,4 @@
-using Aether.Leagues.Adapters.UnitOfWorks;
+using SimpleBanking.Domain.Providers.Services;
 using SimpleBanking.Infra.Database.EF.UnitOfWork;
 
 namespace SimpleBanking.DependencyInjection.Providers;

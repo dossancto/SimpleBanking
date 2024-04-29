@@ -1,4 +1,4 @@
-namespace Aether.Leagues.Adapters.UnitOfWorks;
+namespace SimpleBanking.Domain.Providers.Services;
 
 /// <summary>
 /// Represents a unit of work helper

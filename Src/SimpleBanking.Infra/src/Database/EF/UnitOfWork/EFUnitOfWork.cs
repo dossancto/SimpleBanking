@@ -1,5 +1,5 @@
-using Aether.Leagues.Adapters.UnitOfWorks;
 using Microsoft.EntityFrameworkCore.Storage;
+using SimpleBanking.Domain.Providers.Services;
 using SimpleBanking.Infra.Database.EF.Contexts;
 
 namespace SimpleBanking.Infra.Database.EF.UnitOfWork;

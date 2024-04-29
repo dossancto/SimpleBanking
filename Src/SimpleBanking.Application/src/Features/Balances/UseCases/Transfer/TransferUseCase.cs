@@ -1,12 +1,16 @@
-using Aether.Leagues.Adapters.UnitOfWorks;
+using MediatR;
+
 using SimpleBanking.Adapters.Transfering;
+using SimpleBanking.Application.Events.Transfer.MoneyTransfered;
 using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;
+
 using SimpleBanking.Domain.Exceptions;
 using SimpleBanking.Domain.Features.Balances.Exceptions;
 using SimpleBanking.Domain.Features.Merchants.Entities;
 using SimpleBanking.Domain.Features.Persons.Entities;
+using SimpleBanking.Domain.Providers.Services;
 
 namespace SimpleBanking.Application.Features.Balances.UseCases.Transfer;
 
@@ -15,6 +19,7 @@ public class TransferUseCase(
     IPersonRepository _personRepository,
     IMerchantRepository _merchantRepository,
     IUnitOfWork _uow,
+    IMediator _mediator,
     ITransferAuthorizerAdapter _transferAuthorizer
     ) : IUseCase
 {
@@ -26,6 +31,13 @@ public class TransferUseCase(
         await AssertAuthorized();
 
         await Move(sender, receiver, input.Ammount);
+
+        await _mediator.Publish(new MoneyTransferedNotification()
+        {
+            Ammount = input.Ammount,
+            Receiver = receiver.Data!,
+            Sender = sender.Data!
+        });
     }
 
     private async Task AssertAuthorized()

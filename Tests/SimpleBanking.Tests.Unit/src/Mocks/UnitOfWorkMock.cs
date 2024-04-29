@@ -1,4 +1,4 @@
-using Aether.Leagues.Adapters.UnitOfWorks;
+using SimpleBanking.Domain.Providers.Services;
 
 namespace SimpleBanking.Tests.Unit.Mocks;
 

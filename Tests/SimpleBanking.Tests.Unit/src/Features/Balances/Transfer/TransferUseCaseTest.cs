@@ -1,3 +1,4 @@
+using MediatR;
 using SimpleBanking.Adapters.Transfering;
 using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Balances.UseCases.Transfer;
@@ -23,6 +24,8 @@ public class TransferUseCaseTest
         var unitOfWorkMock = new Mock<UnitOfWorkMock>();
         var transferAuthorization = new Mock<ITransferAuthorizerAdapter>();
 
+        var mediator = new Mock<IMediator>();
+
         var uniqueUsecase = new UniqueContactUseCase(
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object
@@ -33,7 +36,8 @@ public class TransferUseCaseTest
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object,
             _uow: unitOfWorkMock.Object,
-            _transferAuthorizer: transferAuthorization.Object
+            _transferAuthorizer: transferAuthorization.Object,
+            _mediator: mediator.Object
             );
 
         var input = new TransferInput()
@@ -63,11 +67,11 @@ public class TransferUseCaseTest
         var unitOfWorkMock = new Mock<UnitOfWorkMock>();
         var transferAuthorization = new Mock<ITransferAuthorizerAdapter>();
 
+        var mediator = new Mock<IMediator>();
+
         transferAuthorization
           .Setup(x => x.Authorize())
           .ReturnsAsync(true);
-
-
 
         transferAuthorization
           .Setup(x => x.Authorize())
@@ -105,7 +109,8 @@ public class TransferUseCaseTest
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object,
             _uow: unitOfWorkMock.Object,
-            _transferAuthorizer: transferAuthorization.Object
+            _transferAuthorizer: transferAuthorization.Object,
+            _mediator: mediator.Object
             );
 
         var input = new TransferInput()
@@ -139,6 +144,8 @@ public class TransferUseCaseTest
         var unitOfWorkMock = new Mock<UnitOfWorkMock>();
 
         var transferAuthorization = new Mock<ITransferAuthorizerAdapter>();
+
+        var mediator = new Mock<IMediator>();
 
         transferAuthorization
           .Setup(x => x.Authorize())
@@ -176,7 +183,8 @@ public class TransferUseCaseTest
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object,
             _uow: unitOfWorkMock.Object,
-            _transferAuthorizer: transferAuthorization.Object
+            _transferAuthorizer: transferAuthorization.Object,
+            _mediator: mediator.Object
             );
 
         var input = new TransferInput()

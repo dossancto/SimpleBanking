@@ -10,8 +10,8 @@ public class TransferHandler(
     public async Task<bool> Handle(TransferCommand request, CancellationToken cancellationToken)
     {
         await _transfer.Execute(request.Input);
+
         return true;
     }
-
 }
 
