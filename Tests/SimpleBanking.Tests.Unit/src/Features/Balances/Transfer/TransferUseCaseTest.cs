@@ -1,3 +1,4 @@
+using SimpleBanking.Adapters.Transfering;
 using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Balances.UseCases.Transfer;
 using SimpleBanking.Application.Features.Merchants.Data;
@@ -20,6 +21,7 @@ public class TransferUseCaseTest
         var merchantRepository = new Mock<IMerchantRepository>();
 
         var unitOfWorkMock = new Mock<UnitOfWorkMock>();
+        var transferAuthorization = new Mock<ITransferAuthorizerAdapter>();
 
         var uniqueUsecase = new UniqueContactUseCase(
             _personRepository: personRepository.Object,
@@ -30,7 +32,8 @@ public class TransferUseCaseTest
             _uniqueContact: uniqueUsecase,
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object,
-            _uow: unitOfWorkMock.Object
+            _uow: unitOfWorkMock.Object,
+            _transferAuthorizer: transferAuthorization.Object
             );
 
         var input = new TransferInput()
@@ -58,6 +61,17 @@ public class TransferUseCaseTest
         var merchantRepository = new Mock<IMerchantRepository>();
 
         var unitOfWorkMock = new Mock<UnitOfWorkMock>();
+        var transferAuthorization = new Mock<ITransferAuthorizerAdapter>();
+
+        transferAuthorization
+          .Setup(x => x.Authorize())
+          .ReturnsAsync(true);
+
+
+
+        transferAuthorization
+          .Setup(x => x.Authorize())
+          .ReturnsAsync(true);
 
         personRepository
           .Setup(x => x.SearchByTerm(It.Is<SearchPersonByTermInput>(x => x.Term == "cpf")))
@@ -90,7 +104,8 @@ public class TransferUseCaseTest
             _uniqueContact: uniqueUsecase,
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object,
-            _uow: unitOfWorkMock.Object
+            _uow: unitOfWorkMock.Object,
+            _transferAuthorizer: transferAuthorization.Object
             );
 
         var input = new TransferInput()
@@ -123,6 +138,12 @@ public class TransferUseCaseTest
 
         var unitOfWorkMock = new Mock<UnitOfWorkMock>();
 
+        var transferAuthorization = new Mock<ITransferAuthorizerAdapter>();
+
+        transferAuthorization
+          .Setup(x => x.Authorize())
+          .ReturnsAsync(true);
+
         personRepository
           .Setup(x => x.SearchByTerm(It.Is<SearchPersonByTermInput>(x => x.Term == "cpf")))
           .ReturnsAsync(new Person()
@@ -154,7 +175,8 @@ public class TransferUseCaseTest
             _uniqueContact: uniqueUsecase,
             _personRepository: personRepository.Object,
             _merchantRepository: merchantRepository.Object,
-            _uow: unitOfWorkMock.Object
+            _uow: unitOfWorkMock.Object,
+            _transferAuthorizer: transferAuthorization.Object
             );
 
         var input = new TransferInput()

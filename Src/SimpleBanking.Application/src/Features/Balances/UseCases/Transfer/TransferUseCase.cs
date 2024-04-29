@@ -1,4 +1,5 @@
 using Aether.Leagues.Adapters.UnitOfWorks;
+using SimpleBanking.Adapters.Transfering;
 using SimpleBanking.Application.Features.Accounts.UseCases;
 using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;
@@ -13,7 +14,8 @@ public class TransferUseCase(
     UniqueContactUseCase _uniqueContact,
     IPersonRepository _personRepository,
     IMerchantRepository _merchantRepository,
-    IUnitOfWork _uow
+    IUnitOfWork _uow,
+    ITransferAuthorizerAdapter _transferAuthorizer
     ) : IUseCase
 {
     public async Task Execute(TransferInput input)
@@ -21,7 +23,19 @@ public class TransferUseCase(
         var sender = await GetSenderContact(input);
         var receiver = await GetReceiverContact(input);
 
+        await AssertAuthorized();
+
         await Move(sender, receiver, input.Ammount);
+    }
+
+    private async Task AssertAuthorized()
+    {
+        var isAuthorized = await _transferAuthorizer.Authorize();
+
+        if (!isAuthorized)
+        {
+            throw new TransferException("Not Authorized");
+        }
     }
 
     private async Task Move(UniqueContatOutput sender, UniqueContatOutput receiver, int balance)
