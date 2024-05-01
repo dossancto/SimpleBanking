@@ -5,20 +5,11 @@ using SimpleBanking.Domain.Features.Persons.Entities;
 
 namespace SimpleBanking.Tests.Integration.Helpers.Creation;
 
-public class CreatePersonResource
-{
-    public required IntegrationTestWebApplicationFactory Web;
-}
 
 public static class CreatePersonHelper
 {
-    public static CreatePersonResource Resources(this IntegrationTestWebApplicationFactory web)
-    => new()
-    {
-        Web = web
-    };
 
-    private static async Task<SafePerson> CreatePerson(this CreatePersonResource resource, IServiceScope scope)
+    private static async Task<SafePerson> CreatePerson(this HelperResources resource, IServiceScope scope)
     {
         var registerPlayer = scope.ServiceProvider.GetRequiredService<CreatePersonUseCase>();
 
@@ -38,16 +29,16 @@ public static class CreatePersonHelper
         return await registerPlayer.Execute(payload);
     }
 
-    public static Task<SafePerson> CreatePerson(this CreatePersonResource resource)
+    public static Task<SafePerson> CreatePerson(this HelperResources resource)
     {
-        using var scope = resource.Web.Services.CreateScope();
+        var scope = resource.Web.Services.CreateScope();
 
         return resource.CreatePerson(scope);
     }
 
-    public static async Task<SafePerson> CreatePersonWithBalance(this CreatePersonResource resource, int ammount)
+    public static async Task<SafePerson> CreatePersonWithBalance(this HelperResources resource, int ammount)
     {
-        using var scope = resource.Web.Services.CreateScope();
+        var scope = resource.Web.Services.CreateScope();
 
         var person = await resource.CreatePerson(scope);
 

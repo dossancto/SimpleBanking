@@ -1,3 +1,4 @@
+using SimpleBanking.API.Middlewares.ErrorMiddlewares;
 using SimpleBanking.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.AddErrorHandlers(app.Environment);
 
 app.Run();
 
