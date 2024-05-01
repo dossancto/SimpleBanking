@@ -63,3 +63,11 @@ This is a Picpay Backend Code challange
         ```sh
         make api/watch
         ```
+
+## Architecture
+
+To see more about the architecture, you can see the `README.md` file on each `Src/SimpleBanking.*` directory.
+
+Here a representation of the architecture goals
+
+<img src="./resources/imgs/Simple-Banking-arch.png" />
