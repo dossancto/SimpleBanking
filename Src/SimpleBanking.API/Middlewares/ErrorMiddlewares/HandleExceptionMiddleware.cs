@@ -1,4 +1,5 @@
 using SimpleBanking.Domain.Features.Balances.Exceptions;
+using SimpleBanking.Domain.Exceptions;
 
 namespace SimpleBanking.API.Middlewares.ErrorMiddlewares;
 
@@ -26,12 +27,12 @@ public class BaseError
     /// <summary>
     /// Represents a status code
     /// </summary>
-    public string Kind { get; set; } = string.Empty;
+    public required string Kind { get; set; }
 
     /// <summary>
     /// The message describing the error
     /// </summary>
-    public string Message { get; set; } = string.Empty;
+    public required string Message { get; set; }
 
     /// <summary>
     /// More details about the error
@@ -121,6 +122,7 @@ public static class HandleExceptionMiddlewareExtensions
       => ex switch
       {
           TransferException e => e.HandleTransferError(),
+          ValidationFailException e => e.HandleError(),
 
           _ => new()
           {
