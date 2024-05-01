@@ -14,3 +14,4 @@ To this problem, we have the `Commands` and `Handlers`. They are resposable for 
 
 Here, a representation of this concept.
 
+<img src="../../resources/imgs/application-layer.png" />
