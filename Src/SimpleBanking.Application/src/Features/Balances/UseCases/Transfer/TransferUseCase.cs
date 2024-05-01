@@ -46,7 +46,11 @@ public class TransferUseCase(
 
         if (!isAuthorized)
         {
-            throw new TransferException("Not Authorized");
+            throw new TransferException("Not Authorized")
+            {
+                ErrorType = TransferErrorType.NOT_AUTHORIZED,
+                Details = "Our authorization server refused the transfer"
+            };
         }
     }
 
@@ -56,6 +60,9 @@ public class TransferUseCase(
         {
             Person p => () => _personRepository.MoveBalance(p.Id, -balance),
             _ => throw new TransferException("This sender is not supported")
+            {
+                ErrorType = TransferErrorType.UNSUPORTED_SENDER
+            }
         };
 
         Func<Task> receiverRepo = receiver.Data switch
@@ -63,11 +70,18 @@ public class TransferUseCase(
             Person p => () => _personRepository.MoveBalance(p.Id, balance),
             Merchant m => () => _merchantRepository.MoveBalance(m.Id, balance),
             _ => throw new TransferException("Receiver not supported")
+            {
+                ErrorType = TransferErrorType.UNSUPORTED_RECEIVER
+            }
         };
 
         if (sender.Data.Balance.Debit < balance)
         {
-            throw new TransferException("Insuficient ammount");
+            throw new TransferException("Insuficient ammount")
+            {
+                ErrorType = TransferErrorType.INSUFICIENT_AMMOUNT,
+                Details = $"You do not have the required ammount to transfer"
+            };
         }
 
         var work = async () =>
@@ -91,9 +105,12 @@ public class TransferUseCase(
             throw new NotFoundException($"Sender user with {input.Sender} not found.");
         }
 
-        if (senderT.UserType == ConlitedEnum.Merchant)
+        if (senderT.UserType is ConlitedEnum.Merchant)
         {
-            throw new TransferException("Merchant can't transfer");
+            throw new TransferException("Merchant can't transfer")
+            {
+                ErrorType = TransferErrorType.UNSUPORTED_SENDER
+            };
         }
 
         return senderT;

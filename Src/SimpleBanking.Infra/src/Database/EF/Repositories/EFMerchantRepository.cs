@@ -36,7 +36,10 @@ public class EFMerchantRepository(
 
         if (entity != 1)
         {
-            throw new TransferException("Fail while updating balance");
+            throw new TransferException("Fail while updating balance")
+            {
+                ErrorType = TransferErrorType.ERROR_IN_TRANSACTION
+            };
         }
 
         await _context.SaveChangesAsync();

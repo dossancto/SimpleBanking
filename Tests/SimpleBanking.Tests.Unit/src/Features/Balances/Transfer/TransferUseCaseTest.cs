@@ -196,10 +196,11 @@ public class TransferUseCaseTest
 
         //When
         var task = () => usecase.Execute(input); ;
-        await Assert.ThrowsAsync<TransferException>(task);
+        var err = await Assert.ThrowsAsync<TransferException>(task);
+
+        err.ErrorType.Should().Be(TransferErrorType.INSUFICIENT_AMMOUNT);
 
         //Then
-
         personRepository.Verify(x => x.MoveBalance(It.Is<string>(x => x == "1"), It.IsAny<int>()), Times.Never());
         personRepository.Verify(x => x.MoveBalance(It.Is<string>(x => x == "2"), It.IsAny<int>()), Times.Never());
 
