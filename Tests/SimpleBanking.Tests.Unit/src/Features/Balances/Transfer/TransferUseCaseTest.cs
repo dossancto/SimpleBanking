@@ -1,6 +1,6 @@
 using MediatR;
 using SimpleBanking.Adapters.Transfering;
-using SimpleBanking.Application.Features.Accounts.UseCases;
+using SimpleBanking.Application.Features.Accounts.UseCases.UniqueContact;
 using SimpleBanking.Application.Features.Balances.UseCases.Transfer;
 using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;

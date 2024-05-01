@@ -1,4 +1,4 @@
-namespace SimpleBanking.Application.Features.Accounts.UseCases;
+namespace SimpleBanking.Application.Features.Accounts.UseCases.UniqueContact;
 
 /// <summary>
 /// represents data used to search for unique input

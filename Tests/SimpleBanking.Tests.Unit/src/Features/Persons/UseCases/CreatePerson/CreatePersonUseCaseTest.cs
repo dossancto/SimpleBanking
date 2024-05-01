@@ -2,7 +2,7 @@ using SimpleBanking.Application.Features.Persons.Data;
 using SimpleBanking.Adapters.Hash;
 using SimpleBanking.Application.Features.Persons.UseCases.CreatePerson;
 using SimpleBanking.Domain.Exceptions;
-using SimpleBanking.Application.Features.Accounts.UseCases;
+using SimpleBanking.Application.Features.Accounts.UseCases.UniqueContact;
 using SimpleBanking.Application.Features.Persons.UseCases.SelectPerson;
 using SimpleBanking.Application.Features.Merchants.Data;
 

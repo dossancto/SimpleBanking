@@ -1,8 +1,11 @@
 using FluentValidation;
+
 using SimpleBanking.Adapters.Hash;
-using SimpleBanking.Application.Features.Accounts.UseCases;
+
+using SimpleBanking.Application.Features.Accounts.UseCases.UniqueContact;
 using SimpleBanking.Application.Features.Persons.Data;
 using SimpleBanking.Application.Validations;
+
 using SimpleBanking.Domain.Exceptions;
 using SimpleBanking.Domain.Features.Persons.Entities;
 

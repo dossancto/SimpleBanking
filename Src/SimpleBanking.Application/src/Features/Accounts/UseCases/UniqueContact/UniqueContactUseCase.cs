@@ -1,7 +1,7 @@
 using SimpleBanking.Application.Features.Merchants.Data;
 using SimpleBanking.Application.Features.Persons.Data;
 
-namespace SimpleBanking.Application.Features.Accounts.UseCases;
+namespace SimpleBanking.Application.Features.Accounts.UseCases.UniqueContact;
 
 /// <summary>
 /// Represents a usecase for asserting that unique informaitons are really unique
