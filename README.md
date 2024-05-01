@@ -49,7 +49,7 @@ This is a Picpay Backend Code challange
     - Before running the application, you must run the migrations
 
         ```sh
-        dotnet ef database update Src/SimpleBanking.API/
+        dotnet ef database update -s Src/SimpleBanking.API/
         ```
 
     - Now you can easily start the application
