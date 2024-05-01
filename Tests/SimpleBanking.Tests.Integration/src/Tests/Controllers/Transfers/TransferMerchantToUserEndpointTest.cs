@@ -44,5 +44,40 @@ public class TransferMerchantToUserEndpointTest(IntegrationTestWebApplicationFac
         result.Should().NotBeNull();
         result!.Kind.Should().Be(TransferErrorType.UNSUPORTED_SENDER.ToString());
     }
+
+    [Fact]
+    public async Task POSTTransferEndpoint_MerchantNotFound_ShouldThrowTransferExceptionUnsupportedSender()
+    {
+        var receiverInitialBalance = 300;
+        //Given
+        var client = web.CreateClient();
+        var resources = web.Resources();
+
+        var scope = resources.Web.Services.CreateScope();
+
+        var p1 = await resources.CreateMerchant();
+        var p2 = await resources.CreatePersonWithBalance(receiverInitialBalance);
+
+        var createInput = new TransferInput()
+        {
+            Sender = p1.CNPJ + "This not exists",
+            Receiver = p2.CPF,
+            Ammount = 100
+        };
+
+        var transferPayload = createInput.AsPayload();
+
+        //When
+        var response = await client.PostAsync(TransferEndpoints.TRANSFER, transferPayload);
+        var content = await response.Content.ReadAsStringAsync();
+
+        //Then
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var result = content.FromPayload<BaseError>();
+
+        result.Should().NotBeNull();
+        result!.Kind.Should().Be("NOT_FOUND");
+    }
 }
 

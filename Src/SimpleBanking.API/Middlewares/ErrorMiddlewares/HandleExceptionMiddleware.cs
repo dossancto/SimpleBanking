@@ -123,6 +123,8 @@ public static class HandleExceptionMiddlewareExtensions
       {
           TransferException e => e.HandleTransferError(),
           ValidationFailException e => e.HandleError(),
+          NotFoundException e => e.HandleError(),
+          EntityAlreadyExistsException e => e.HandleError(),
 
           _ => new()
           {
