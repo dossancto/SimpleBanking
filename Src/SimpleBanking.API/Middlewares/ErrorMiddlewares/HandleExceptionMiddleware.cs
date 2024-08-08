@@ -90,7 +90,6 @@ public class HandleExceptionMiddleware(ILogger<HandleExceptionMiddleware> logger
 
             var response = ex.HandleGenericException();
 
-
             if (response.StatusCode == 500)
             {
                 throw;
@@ -119,18 +118,27 @@ public static class HandleExceptionMiddlewareExtensions
     }
 
     public static HandledResponse HandleGenericException(this Exception ex)
-      => ex switch
-      {
-          TransferException e => e.HandleTransferError(),
-          ValidationFailException e => e.HandleError(),
-          NotFoundException e => e.HandleError(),
-          EntityAlreadyExistsException e => e.HandleError(),
+    {
+        var result = ex switch
+        {
+            TransferException e => e.HandleTransferError(),
+            ValidationFailException e => e.HandleError(),
+            NotFoundException e => e.HandleError(),
+            EntityAlreadyExistsException e => e.HandleError(),
 
-          _ => new()
-          {
-              Content = "Something went wrong on our side",
-              StatusCode = 500
-          }
+            _ => new()
+            {
+                Content = "Something went wrong on our side",
+                StatusCode = 500
+            }
 
-      };
+        };
+
+        if (result.StatusCode == 500)
+        {
+
+        }
+
+        return result;
+    }
 }

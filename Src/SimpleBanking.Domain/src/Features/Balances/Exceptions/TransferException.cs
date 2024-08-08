@@ -50,4 +50,5 @@ public enum TransferErrorType
     /// THe transaction is not authorized
     /// </summary>
     NOT_AUTHORIZED,
+
 }
