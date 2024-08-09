@@ -1,5 +1,7 @@
 # Simple Banking
 
+![picpay](https://github.com/user-attachments/assets/54d1a8d4-abde-4717-b03e-1a30de9844e1)
+
 ## About
 
 This is a Picpay Backend Code challange
