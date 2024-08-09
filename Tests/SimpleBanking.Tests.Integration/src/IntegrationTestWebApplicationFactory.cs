@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-
-using Testcontainers.PostgreSql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using SimpleBanking.Tests.Integration.Setup;
+using NSubstitute;
+using SimpleBanking.Adapters.MessageBrokers;
 using SimpleBanking.Infra.Database.EF.Contexts;
+using SimpleBanking.Tests.Integration.Setup;
+using Testcontainers.PostgreSql;
 
 namespace SimpleBanking.Tests.Integration;
 
@@ -29,10 +30,13 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
+            services.RemoveAll(typeof(IMessageBrokerProvider));
             // services.RemoveAll(typeof(IMessageBrokerProvider));
 
             Console.WriteLine("Remove old dependencies");
             services.AddTestEnvironment(_postgreSqlContainer);
+
+            services.AddScoped<IMessageBrokerProvider>(_ => Substitute.For<IMessageBrokerProvider>());
 
             // var messageBrokerMock = new Mock<IMessageBrokerProvider>();
 
